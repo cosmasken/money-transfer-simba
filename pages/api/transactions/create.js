@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/client";
 import prisma from "../../../lib/prisma";
 const CC = require('currency-converter-lt')
 
@@ -52,14 +53,14 @@ export default async (req, res) =>{
         return;
     }
    
-    let currencyConverter = new CC({sender:fromCurrency , receiver:toCurrency , amount:parseFloat(amountToSend)});
+    let currencyConverter = new CC({from:fromCurrency , to:toCurrency , amount:parseFloat(amountToSend)});
     let convertedAmount = await currencyConverter.convert()
 
     
     const createQuery = await prisma.transaction.create({
         data:{
-            sender:authenticatedUser.names,
-            receiver:receiver,
+            from:authenticatedUser.names,
+            to:receiver,
             amount:convertedAmount,
             currency:toCurrency
         }
